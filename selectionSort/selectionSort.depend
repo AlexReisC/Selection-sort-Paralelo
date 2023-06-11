@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1684380814 source:c:\users\alex\desktop\projeto_opemmpmpi\selectionsort\main.c
+	<stdio.h>
+	<stdlib.h>
+	<omp.h>
+	<time.h>
+
+1686169660 source:c:\users\alex\desktop\projeto-paralelismo\selectionsort\main.c
+	<stdio.h>
+	<stdlib.h>
+	<omp.h>
+	<time.h>
+
