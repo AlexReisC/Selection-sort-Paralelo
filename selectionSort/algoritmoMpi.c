@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <mpi.h>
 
-#define TAM 1000
+#define TAM 50000
 
 int *geraVetor(int n){
     int* vet = (int*)malloc(sizeof(int)*n);
