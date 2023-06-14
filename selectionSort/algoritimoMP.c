@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <omp.h>
 #include <time.h>
-#include <mpi.h>
 
-#define MAX 10
+#define MAX 1000
 
 int *geraVetor(int n){
     int* vet = (int*)malloc(sizeof(int)*n);
@@ -21,37 +20,45 @@ void mostraVetor(int *v, int n){
     printf("\n");
 }
 
-int main(){
-    srand(time(NULL));
-    int *vetor = NULL;
-    vetor = geraVetor(MAX);
-    mostraVetor(vetor, MAX);
-    int i = 0, j, aux, menorIndice;
-
-    // Implementacao com OpenMP
-    double inicio_omp = omp_get_wtime();
-    #pragma omp parallel private(menorIndice) num_threads(2)
+void selectionSortParallel(int vetor[], int n) {
+    int i, j, menorIndice, aux;
+    
+    double inicio = omp_get_wtime();
+    #pragma omp parallel private(i, j, menorIndice, aux) num_threads(4)
     {
-        #pragma omp for
-        for(i = 0; i < MAX; i++){
+        #pragma omp for ordered
+        for (i = 0; i < n; i++) {
             menorIndice = i;
-            for(j = i+1; j < MAX; j++){
-                #pragma omp atomic
-                    if(vetor[j] < vetor[menorIndice]){
+            for (j = i+1; j < n; j++){
+                #pragma omp ordered
+                {
+                    if (vetor[j] < vetor[menorIndice])
+                    {
                         menorIndice = j;
                     }
+                }
+                
             }
-            aux = vetor[i];
-            vetor[i] = vetor[menorIndice];
-            vetor[menorIndice] = aux;
+            // Troca os elementos
+            if(menorIndice != i){
+                aux = vetor[menorIndice];
+                vetor[menorIndice] = vetor[i];
+                vetor[i] = aux;
+            }
         }
     }
+    double fim = omp_get_wtime();
+    double tempo = fim - inicio;
+    printf("--------- Tempo: %f ----------", tempo);
+}
 
-    mostraVetor(vetor, MAX);
+int main() {
+    srand(time(NULL));
+    
+    int *vetor = NULL;
+    vetor = geraVetor(MAX);
 
-    double fim_omp = omp_get_wtime();
-    double tempo_omp = fim_omp - inicio_omp;
-    printf("Tempo com OpenMp: %.5f \n", tempo_omp);
+    selectionSortParallel(vetor, MAX);
 
     return 0;
 }
