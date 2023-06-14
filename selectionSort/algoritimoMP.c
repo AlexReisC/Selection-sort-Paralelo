@@ -8,7 +8,7 @@
 int *geraVetor(int n){
     int* vet = (int*)malloc(sizeof(int)*n);
     for(int i = 0; i < n; i++){
-        vet[i] = rand() % 100;
+        vet[i] = rand();
     }
     return vet;
 }
@@ -62,7 +62,12 @@ int main() {
     int *vetor = NULL;
     vetor = geraVetor(MAX);
 
+    double inicio = omp_get_wtime();
     selectionSortParallel(vetor, MAX);
+    double fim = omp_get_wtime();
 
+    double t = fim - inicio;
+    printf("\nTempo 2: %f", t);
+    
     return 0;
 }
