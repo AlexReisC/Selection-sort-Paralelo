@@ -24,12 +24,15 @@ void selectionSortParallel(int vetor[], int n) {
     int i, j, menorIndice, aux;
     
     double inicio = omp_get_wtime();
+    // Inicia a regiao paralela e torna privada para cada thread as variaveis i, j, menorIndice e aux
     #pragma omp parallel private(i, j, menorIndice, aux) num_threads(4)
     {
+        // 'ordered' indica que em um ponto as threads trabalharam sequencialmente
         #pragma omp for ordered
         for (i = 0; i < n; i++) {
             menorIndice = i;
             for (j = i+1; j < n; j++){
+                // Inicia a regiao sequencial
                 #pragma omp ordered
                 {
                     if (vetor[j] < vetor[menorIndice])
@@ -47,9 +50,10 @@ void selectionSortParallel(int vetor[], int n) {
             }
         }
     }
+    
     double fim = omp_get_wtime();
     double tempo = fim - inicio;
-    printf("--------- Tempo: %f ----------", tempo);
+    printf("--------- Tempo paralelo: %f ----------", tempo);
 }
 
 int main() {
